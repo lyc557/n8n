@@ -1,0 +1,43 @@
+{
+	"id": "dy0nWqdqkKcP4p8E",
+	"name": "My workflow",
+	"active": false,
+	"activeVersionId": null,
+	"nodes": [
+		{
+			"parameters": { "notice": "" },
+			"type": "n8n-nodes-base.manualTrigger",
+			"typeVersion": 1,
+			"position": [-208, 0],
+			"id": "6e30e62a-ad45-46e5-98c6-8c3ff59995f9",
+			"name": "When clicking ‘Execute workflow’"
+		},
+		{
+			"parameters": {
+				"preBuiltAgentsCalloutHttpRequest": "",
+				"curlImport": "",
+				"method": "GET",
+				"url": "",
+				"authentication": "none",
+				"provideSslCertificates": false,
+				"sendQuery": false,
+				"sendHeaders": false,
+				"sendBody": false,
+				"options": {},
+				"infoMessage": ""
+			},
+			"type": "n8n-nodes-base.httpRequest",
+			"typeVersion": 4.3,
+			"position": [208, 32],
+			"id": "93175f65-8031-42ef-bc81-eb591e3efb7d",
+			"name": "HTTP Request"
+		}
+	],
+	"connections": {
+		"When clicking ‘Execute workflow’": {
+			"main": [[{ "node": "HTTP Request", "type": "main", "index": 0 }]]
+		}
+	},
+	"settings": { "executionOrder": "v1" },
+	"pinData": {}
+}

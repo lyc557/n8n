@@ -1,60 +1,60 @@
 ![n8n.io - Workflow Automation](https://user-images.githubusercontent.com/65276001/173571060-9f2f6d7b-bac0-43b6-bdb2-001da9694058.png)
 
-# n8n - Secure Workflow Automation for Technical Teams
+# n8n - 技术团队的安全工作流自动化
 
-n8n is a workflow automation platform that gives technical teams the flexibility of code with the speed of no-code. With 400+ integrations, native AI capabilities, and a fair-code license, n8n lets you build powerful automations while maintaining full control over your data and deployments.
+n8n 是一个工作流自动化平台，为技术团队提供了兼具代码灵活性和无代码速度的体验。拥有 400 多个集成、原生的 AI 能力以及公平代码（fair-code）许可，n8n 让您可以构建强大的自动化流程，同时保持对数据和部署的完全控制。
 
-![n8n.io - Screenshot](https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-screenshot-readme.png)
+![n8n.io - 截图](https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-screenshot-readme.png)
 
-## Key Capabilities
+## 关键能力
 
-- **Code When You Need It**: Write JavaScript/Python, add npm packages, or use the visual interface
-- **AI-Native Platform**: Build AI agent workflows based on LangChain with your own data and models
-- **Full Control**: Self-host with our fair-code license or use our [cloud offering](https://app.n8n.cloud/login)
-- **Enterprise-Ready**: Advanced permissions, SSO, and air-gapped deployments
-- **Active Community**: 400+ integrations and 900+ ready-to-use [templates](https://n8n.io/workflows)
+- **按需编写代码**：编写 JavaScript/Python，添加 npm 包，或使用可视化界面
+- **原生 AI 平台**：基于 LangChain 构建 AI 代理工作流，使用您自己的数据和模型
+- **完全掌控**：使用我们的公平代码许可进行自托管，或使用我们的 [云服务](https://app.n8n.cloud/login)
+- **企业级就绪**：高级权限管理、SSO 和气隙（air-gapped）部署
+- **活跃社区**：400+ 集成和 900+ 现成的 [模板](https://n8n.io/workflows)
 
-## Contents
+## 目录
 
-- [n8n - Workflow automation tool](#n8n---workflow-automation-tool)
-  - [Key Capabilities](#key-capabilities)
-  - [Contents](#contents)
-  - [Demo](#demo)
-  - [Available integrations](#available-integrations)
-  - [Documentation](#documentation)
-  - [Start n8n in Docker](#start-n8n-in-docker)
-  - [Use with PostgreSQL](#use-with-postgresql)
-  - [Passing sensitive data using files](#passing-sensitive-data-using-files)
-  - [Example server setups](#example-server-setups)
-  - [Updating](#updating)
-    - [Pull latest (stable) version](#pull-latest-stable-version)
-    - [Pull specific version](#pull-specific-version)
-    - [Pull next (unstable) version](#pull-next-unstable-version)
-    - [Updating with Docker Compose](#updating-with-docker-compose)
-  - [Setting Timezone](#setting-the-timezone)
-  - [Build Docker-Image](#build-docker-image)
-  - [What does n8n mean and how do you pronounce it?](#what-does-n8n-mean-and-how-do-you-pronounce-it)
-  - [Support](#support)
-  - [Jobs](#jobs)
-  - [License](#license)
+- [n8n - 工作流自动化工具](#n8n---工作流自动化工具)
+  - [关键能力](#关键能力)
+  - [目录](#目录)
+  - [演示](#演示)
+  - [可用集成](#可用集成)
+  - [文档](#文档)
+  - [在 Docker 中启动 n8n](#在-docker-中启动-n8n)
+  - [配合 PostgreSQL 使用](#配合-postgresql-使用)
+  - [使用文件传递敏感数据](#使用文件传递敏感数据)
+  - [示例服务器设置](#示例服务器设置)
+  - [更新](#更新)
+    - [拉取最新（稳定）版本](#拉取最新稳定版本)
+    - [拉取特定版本](#拉取特定版本)
+    - [拉取下一个（不稳定）版本](#拉取下一个不稳定版本)
+    - [使用 Docker Compose 更新](#使用-docker-compose-更新)
+  - [设置时区](#设置时区)
+  - [构建 Docker 镜像](#构建-docker-镜像)
+  - [n8n 是什么意思以及如何发音？](#n8n-是什么意思以及如何发音)
+  - [支持](#支持)
+  - [招聘](#招聘)
+  - [许可证](#许可证)
 
-## Demo
+## 演示
 
-This [:tv: short video (< 4 min)](https://www.youtube.com/watch?v=RpjQTGKm-ok)  goes over key concepts of creating workflows in n8n.
+这个 [:tv: 短视频 (< 4 分钟)](https://www.youtube.com/watch?v=RpjQTGKm-ok) 介绍了在 n8n 中创建工作流的关键概念。
 
-## Available integrations
+## 可用集成
 
-n8n has 200+ different nodes to automate workflows. A full list can be found at [https://n8n.io/integrations](https://n8n.io/integrations).
+n8n 拥有 200+ 个不同的节点用于自动化工作流。完整列表可以在这里找到：[https://n8n.io/integrations](https://n8n.io/integrations)。
 
-## Documentation
+## 文档
 
-The official n8n documentation can be found at [https://docs.n8n.io](https://docs.n8n.io).
+官方 n8n 文档位于 [https://docs.n8n.io](https://docs.n8n.io)。
 
-Additional information and example workflows are available on the website at [https://n8n.io](https://n8n.io).
+更多信息和示例工作流可在官网获取：[https://n8n.io](https://n8n.io)。
 
-## Start n8n in Docker
+## 在 Docker 中启动 n8n
 
-In the terminal, enter the following:
+在终端中输入以下命令：
 
 ```bash
 docker volume create n8n_data
@@ -66,23 +66,21 @@ docker run -it --rm \
  docker.n8n.io/n8nio/n8n
 ```
 
-This command will download the required n8n image and start your container.
-You can then access n8n by opening:
+此命令将下载所需的 n8n 镜像并启动容器。
+然后您可以通过打开以下地址访问 n8n：
 [http://localhost:5678](http://localhost:5678)
 
-To save your work between container restarts, it also mounts a docker volume, `n8n_data`. The workflow data gets saved in an SQLite database in the user folder (`/home/node/.n8n`). This folder also contains important data like the webhook URL and the encryption key used for securing credentials.
+为了在容器重启之间保存您的工作，它还挂载了一个 docker 卷 `n8n_data`。工作流数据保存在用户文件夹 (`/home/node/.n8n`) 中的 SQLite 数据库中。该文件夹还包含重要数据，如 webhook URL 和用于保护凭据的加密密钥。
 
-If this data can't be found at startup n8n automatically creates a new key and any existing credentials can no longer be decrypted.
+如果启动时找不到此数据，n8n 会自动创建一个新密钥，现有的凭据将无法再解密。
 
-## Use with PostgreSQL
+## 配合 PostgreSQL 使用
 
-By default, n8n uses SQLite to save credentials, past executions and workflows. However, n8n also supports using PostgreSQL.
+默认情况下，n8n 使用 SQLite 保存凭据、过去的执行记录和工作流。但是，n8n 也支持使用 PostgreSQL。
 
-> **WARNING**: Even when using a different database, it is still important to
-persist the `/home/node/.n8n` folder, which also contains essential n8n
-user data including the encryption key for the credentials.
+> **警告**：即使使用不同的数据库，持久化 `/home/node/.n8n` 文件夹仍然很重要，因为它包含基本的 n8n 用户数据，包括用于凭据的加密密钥。
 
-In the following commands, replace the placeholders (depicted within angled brackets, e.g. `<POSTGRES_USER>`) with the actual data:
+在以下命令中，将占位符（用尖括号表示，例如 `<POSTGRES_USER>`）替换为实际数据：
 
 ```bash
 docker volume create n8n_data

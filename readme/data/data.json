@@ -1,0 +1,103 @@
+[
+	{
+		"parameters": {
+			"method": "POST",
+			"url": "http://host.docker.internal:3080/api/sentiment/extract/batch",
+			"sendBody": true,
+			"bodyParameters": {
+				"parameters": [
+					{ "name": "cusCode", "value": "={{ $('start').item.json.task_param.cusCode }}" },
+					{
+						"name": "monitorEnterprise",
+						"value": "={{ $('start').item.json.task_param.monitorEnterprise }}"
+					},
+					{
+						"name": "projectBackground",
+						"value": "={{ $('start').item.json.task_param.projectBackground }}"
+					},
+					{
+						"name": "enterpriseVOS",
+						"value": "={{ $('start').item.json.task_param.payload_json.parseJson().enterpriseVOS }}"
+					}
+				]
+			},
+			"options": { "redirect": { "redirect": { "followRedirects": false } } }
+		},
+		"type": "n8n-nodes-base.httpRequest",
+		"typeVersion": 4.3,
+		"position": [224, 48],
+		"id": "a0089e2a-9950-43fa-a744-6e4e4a2f7548",
+		"name": "HTTP Request"
+	},
+	{
+		"parameters": {
+			"content": "## 舆情分析\n通过传递 舆情url和项目背景信息进行AI解读",
+			"height": 80,
+			"width": 384
+		},
+		"type": "n8n-nodes-base.stickyNote",
+		"position": [-304, -96],
+		"typeVersion": 1,
+		"id": "19690e9a-2638-4092-9d4e-e479f8761c43",
+		"name": "Sticky Note"
+	},
+	{
+		"parameters": {},
+		"type": "n8n-nodes-base.manualTrigger",
+		"typeVersion": 1,
+		"position": [-368, 48],
+		"id": "c2fb52b0-2d50-44e8-97d1-a97388ebd9c9",
+		"name": "start",
+		"alwaysOutputData": false
+	},
+	{
+		"parameters": {
+			"endpointUrl": "http://host.docker.internal:8005/mcp",
+			"tool": {
+				"__rl": true,
+				"value": "firecrawl_batch_scrape",
+				"mode": "list",
+				"cachedResultName": "firecrawl_batch_scrape"
+			},
+			"parameters": {
+				"mappingMode": "defineBelow",
+				"value": {
+					"urls": "={{ $json.task_param.records_url_list }}",
+					"biz_type": "={{ $json.task_param.records_biz_type }}"
+				},
+				"matchingColumns": [],
+				"schema": [
+					{
+						"id": "urls",
+						"displayName": "urls",
+						"defaultMatch": false,
+						"required": true,
+						"display": true,
+						"type": "array",
+						"defaultValue": "[\n  null\n]",
+						"removed": false
+					},
+					{
+						"id": "biz_type",
+						"displayName": "biz_type",
+						"defaultMatch": false,
+						"required": true,
+						"display": true,
+						"type": "string",
+						"removed": false
+					}
+				],
+				"attemptToConvertTypes": false,
+				"convertFieldsToString": false
+			},
+			"options": {}
+		},
+		"type": "@n8n/n8n-nodes-langchain.mcpClient",
+		"typeVersion": 1,
+		"position": [-80, 48],
+		"id": "fa23dfa8-6f8c-48dd-93ae-745b6dab7c62",
+		"name": "舆情爬虫",
+		"executeOnce": false,
+		"onError": "continueRegularOutput"
+	}
+]
