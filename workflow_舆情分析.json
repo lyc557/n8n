@@ -1,0 +1,248 @@
+[
+  {
+    "updatedAt": "2025-12-25T07:24:12.506Z",
+    "createdAt": "2025-12-24T03:51:54.540Z",
+    "id": "MQfdngyZiW8KvZpf",
+    "name": "舆情分析v1",
+    "description": null,
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "/api/sentiment/publish/v1",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -304,
+          0
+        ],
+        "id": "f7678238-d7ce-4067-a0de-5e117063cac1",
+        "name": "Webhook",
+        "webhookId": "ca95ebba-2634-47f4-a818-cc6ed466a9cb"
+      },
+      {
+        "parameters": {
+          "jsCode": "const payloadJson = $input.first().json.body.payload_json;\nconst bizType = $input.first().json.body.biz_type; // 如果你的字段名不同就改这里\n\nconst payload = JSON.parse(payloadJson);\n\nconst records_url_list = [];\n\nfor (const enterprise of (payload.enterpriseVOS ?? [])) {\n  for (const record of (enterprise.records ?? [])) {\n    const id = record.id;\n    const titleUrl = record.titleUrl; // 如果是 title_url 就改成 record.title_url\n    records_url_list.push({ id, titleUrl, bizType });\n  }\n}\n\nreturn [{ json: { records_url_list } }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -48,
+          0
+        ],
+        "id": "440820a7-cc42-4a43-8cd0-9a734201e579",
+        "name": "参数处理1"
+      },
+      {
+        "parameters": {
+          "endpointUrl": "http://10.40.0.144:8005/mcp",
+          "tool": {
+            "__rl": true,
+            "value": "firecrawl_batch_scrape",
+            "mode": "list",
+            "cachedResultName": "firecrawl_batch_scrape"
+          },
+          "parameters": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "biz_type": "={{ $('Webhook').item.json.body.biz_type }}",
+              "urls": "={{ $json.records_url_list.map(r => r.titleUrl) }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "urls",
+                "displayName": "urls",
+                "defaultMatch": false,
+                "required": true,
+                "display": true,
+                "type": "array",
+                "defaultValue": "[\n  \"string\"\n]",
+                "removed": false
+              },
+              {
+                "id": "biz_type",
+                "displayName": "biz_type",
+                "defaultMatch": false,
+                "required": true,
+                "display": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.mcpClient",
+        "typeVersion": 1,
+        "position": [
+          176,
+          0
+        ],
+        "id": "c825873a-3d77-44cb-8226-c693a43ee50e",
+        "name": "网页爬虫"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://127.0.0.1:3080/api/sentiment/extract/batch",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ $('Webhook').item.json.body.payload_json.parseJson() }}",
+          "options": {
+            "redirect": {
+              "redirect": {}
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          384,
+          0
+        ],
+        "id": "f33650a0-fb23-419e-91c3-32fd766a1e78",
+        "name": "舆情分析 agent"
+      },
+      {
+        "parameters": {
+          "queue": "ai.n8n.default",
+          "options": {
+            "arguments": {
+              "argument": [
+                {}
+              ]
+            }
+          }
+        },
+        "type": "n8n-nodes-base.rabbitmq",
+        "typeVersion": 1.1,
+        "position": [
+          592,
+          0
+        ],
+        "id": "df20b386-2114-47f4-a735-425ed09ce285",
+        "name": "RabbitMQ",
+        "credentials": {
+          "rabbitmq": {
+            "id": "JxeBCOAAEyO4RDyF",
+            "name": "RabbitMQ account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "参数处理1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "参数处理1": {
+        "main": [
+          [
+            {
+              "node": "网页爬虫",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "网页爬虫": {
+        "main": [
+          [
+            {
+              "node": "舆情分析 agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "舆情分析 agent": {
+        "main": [
+          [
+            {
+              "node": "RabbitMQ",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {
+      "Webhook": [
+        {
+          "json": {
+            "headers": {
+              "user-agent": "Apifox/1.0.0 (https://apifox.com)",
+              "accept": "*/*",
+              "host": "localhost:5678",
+              "accept-encoding": "gzip, deflate, br",
+              "connection": "keep-alive",
+              "content-type": "multipart/form-data; boundary=--------------------------403547315728923415672455",
+              "content-length": "4688"
+            },
+            "params": {},
+            "query": {},
+            "body": {
+              "system_id": "test01",
+              "biz_type": "analysis_sentiment",
+              "source_task_id": "abcd12345",
+              "payload_json": "{\n            \"cusCode\": \"CTLDJY0051\",\n\t\t\t\"monitorEnterprise\": \"陕西旅游集团有限公司\",\n\t\t\t\"projectBackground\": {\n                        \"type\":\"rent\",\n\t\t\t\t\t\t\"lessee\": \"陕西旅游集团有限公司\",\n\t\t\t\t\t\t\"guarantorCompany\": \"南山集团有限公司\",\n\t\t\t\t\t\t\"unpayPrincipal\": 33000000.00,\n\t\t\t\t\t\t\"repayStatus\": \"逾期\"\n\t\t\t},\n            \"enterpriseVOS\": [\n                {\n                    \"monitorEnterprise\": \"陕西旅游集团有限公司\",\n                    \"entOrgCode\": \"9161000022053336XM\",\n                    \"cusTypes\": [ \"授信客户\",\"承租人\" ],\n                    \"records\": [\n                        {\n\t\t\t\t\t\t\t \"id\": 191613,\n                            \"sentimentDate\": \"2024-12-31\",\n                            \"title\": \"交易商协会：对陕西旅游予以严重警告\",\n                            \"titleUrl\": \"https://www.qyyjt.cn/information/riskMonitor/news?id=454FD5E21C95196C07255C636A4A263B&type=riskMonitor_news&lastLevel=F09A2279DEE96948A840FFA4A81C21EEA91D20A4690F21D5AA2C1B2E683D6E87\",\n                            \"monitorType\": \"纪律处分\",\n                            \"eventTypeName\": \"新闻舆情\",\n                            \"resume\": \"陕西旅游集团有限公司作为债务融资工具发行人，存在违反银行间债券市场相关自律管理规则的行为。经自律处分会议初审、复审，对陕西旅游予以严重警告；责令其针对本次事件中暴露出的债券发行、内部管理等方面的问题进行全面深入的整改；对公司相关责任人予以通报批评。\",\n                            \"newsSource\": \"企业预警通 | 财汇AI数据研究院\"\n                            },\n                            \n                        {\n    \t\t\t\t\t\t\"id\": 191554,\n                            \"sentimentDate\": \"2025-01-07\",\n                            \"title\": \"西部证券股份有限公司关于陕西旅游集团有限公司收到中国银行间市场交易商协会自律处分的临时受托管理事务报告\",\n                            \"titleUrl\": \"https://www.qyyjt.cn/information/riskMonitor/notice?id=74F49EDE009869ED0F1A95806F1158C0100EF3D31ED36306EF40E53CDFD831CDB0C99FFFFF74F60844D22E01719D7194&type=riskMonitor_notice_bond&lastLevel=A0703BE5C8EF0F7F91066FCEE4615A6F64C716BC2E8DDA747E8599E2215223E0\",\n                            \"monitorType\": \"自律监管措施\",\n                            \"eventTypeName\": \"公司公告\",\n                            \"newsSource\": \"企业预警通 | 财汇AI数据研究院\"\n                        }\n                    ]\n                },\n                {\n                    \"monitorEnterprise\": \"南山集团有限公司\",\n                    \"entOrgCode\": \"9137068116944191XU\",\n                    \"cusTypes\": [ \"保证公司\" ],\n                    \"records\": [\n                        {\n    \t\t\t\t\t\t \"id\": 37861,\n                            \"sentimentDate\": \"2025-12-02\",\n                            \"title\": \"恒通股份控股股东2164万股遭冻结 涉民间借贷纠纷\",\n                            \"titleUrl\": \"https://www.qyyjt.cn/information/riskMonitor/news?id=2F33EB4E8CFFAEB1BFF36F7038635006&type=riskMonitor_news&lastLevel=BE28A4D748B662BF3B31AAF1130106F11F6DFA3E4708DDD2A526E7853FF72B4C\",\n                            \"monitorType\": \"资产查封/扣押/冻结\",\n                            \"eventTypeName\": \"新闻舆情\",\n                            \"resume\": \"恒通股份公告披露，其控股股东南山集团因与万宁南山融创实业有限公司的民间借贷纠纷，所持公司2164万股股份被司法冻结，占总股本的3.03%。南山集团持股占比41.30%，此次冻结不影响公司控制权及日常经营。万宁南山融创为失信被执行人，票据逾期余额达2848万元，其股东包括融创集团和南山集团。南山集团负债已超1300亿元，旗下多家上市公司在集团财务公司存放大量资金，存在较大资金关联风险。\",\n                            \"newsSource\": \"企业预警通 | 财汇AI数据研究院\"\n    \n                        }\n                    ]\n                }\n            ]\n        }"
+            },
+            "webhookUrl": "http://localhost:5678/webhook-test/api/sentiment/publish/v1",
+            "executionMode": "test"
+          },
+          "pairedItem": {
+            "item": 0
+          }
+        }
+      ]
+    },
+    "versionId": "d9f2242a-3d98-4aa2-8b44-785fef1f5da3",
+    "activeVersionId": "20e3c0f5-a705-4310-9b05-11f9522301cb",
+    "versionCounter": 30,
+    "triggerCount": 1,
+    "tags": [],
+    "shared": [
+      {
+        "updatedAt": "2025-12-24T03:51:54.542Z",
+        "createdAt": "2025-12-24T03:51:54.542Z",
+        "role": "workflow:owner",
+        "workflowId": "MQfdngyZiW8KvZpf",
+        "projectId": "sxfhxWbi3sgr39dI",
+        "project": {
+          "updatedAt": "2025-12-18T06:58:03.535Z",
+          "createdAt": "2025-12-18T06:53:07.412Z",
+          "id": "sxfhxWbi3sgr39dI",
+          "name": "lu yangcai <lyc557@163.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "creatorId": "4de91867-2f8a-487f-a97f-7bd808c47b88"
+        }
+      }
+    ]
+  }
+]
