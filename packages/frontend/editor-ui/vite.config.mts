@@ -1,4 +1,5 @@
-import vue from '@vitejs/plugin-vue';
+import vue from '@vitejs/plugin-vue'; // 确保该文件被包含在 tsconfig.json 的 include 中，或将其加入 allowDefaultProject
+import { createReadStream } from 'fs';
 import { posix as pathPosix, resolve, sep as pathSep } from 'path';
 import { defineConfig, mergeConfig, type UserConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
@@ -83,6 +84,45 @@ const plugins: UserConfig['plugins'] = [
 		compiler: 'vue3',
 		autoInstall: true,
 	}),
+	{
+		name: 'serve-wasm',
+		apply: 'serve',
+		configureServer(server) {
+			const wasmFiles: Record<string, string> = {
+				'/tree-sitter.wasm': resolve(
+					__dirname,
+					'node_modules',
+					'web-tree-sitter',
+					'tree-sitter.wasm',
+				),
+				'/tree-sitter-bash.wasm': resolve(
+					__dirname,
+					'node_modules',
+					'curlconverter',
+					'dist',
+					'tree-sitter-bash.wasm',
+				),
+			};
+
+			server.middlewares.use((req, res, next) => {
+				const pathname = req.url?.split('?')[0];
+				if (!pathname) return next();
+
+				const filePath = wasmFiles[pathname];
+				if (!filePath) return next();
+
+				res.statusCode = 200;
+				res.setHeader('Content-Type', 'application/wasm');
+
+				const stream = createReadStream(filePath);
+				stream.on('error', () => {
+					if (!res.headersSent) res.statusCode = 404;
+					res.end();
+				});
+				stream.pipe(res);
+			});
+		},
+	},
 	// Add istanbul coverage plugin for E2E tests
 	...(process.env.BUILD_WITH_COVERAGE === 'true'
 		? [

@@ -1,0 +1,742 @@
+[
+  {
+    "updatedAt": "2025-12-22T07:43:46.180Z",
+    "createdAt": "2025-12-22T07:36:31.371Z",
+    "id": "5oum5Zbqdx4kMb86",
+    "name": "舆情分析",
+    "description": null,
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://host.docker.internal:3080/api/sentiment/extract/batch",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "cusCode",
+                "value": "={{ $('start').item.json.task_param.cusCode }}"
+              },
+              {
+                "name": "monitorEnterprise",
+                "value": "={{ $('start').item.json.task_param.monitorEnterprise }}"
+              },
+              {
+                "name": "projectBackground",
+                "value": "={{ $('start').item.json.task_param.projectBackground }}"
+              },
+              {
+                "name": "enterpriseVOS",
+                "value": "={{ $('start').item.json.task_param.payload_json.parseJson().enterpriseVOS }}"
+              }
+            ]
+          },
+          "options": {
+            "redirect": {
+              "redirect": {
+                "followRedirects": false
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          224,
+          48
+        ],
+        "id": "2475640d-1503-47cd-9a62-9d5de6042d11",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "content": "## 舆情分析\n通过传递 舆情url和项目背景信息进行AI解读",
+          "height": 80,
+          "width": 384
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -304,
+          -96
+        ],
+        "typeVersion": 1,
+        "id": "e126615f-0ab1-46bf-a706-bd669f5e0576",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -368,
+          48
+        ],
+        "id": "6195186d-8455-4957-813e-bccbcee28cb0",
+        "name": "start",
+        "alwaysOutputData": false
+      },
+      {
+        "parameters": {
+          "endpointUrl": "http://host.docker.internal:8005/mcp",
+          "tool": {
+            "__rl": true,
+            "value": "firecrawl_batch_scrape",
+            "mode": "list",
+            "cachedResultName": "firecrawl_batch_scrape"
+          },
+          "parameters": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "urls": "={{ $json.task_param.records_url_list }}",
+              "biz_type": "={{ $json.task_param.records_biz_type }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "urls",
+                "displayName": "urls",
+                "defaultMatch": false,
+                "required": true,
+                "display": true,
+                "type": "array",
+                "defaultValue": "[\n  null\n]",
+                "removed": false
+              },
+              {
+                "id": "biz_type",
+                "displayName": "biz_type",
+                "defaultMatch": false,
+                "required": true,
+                "display": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.mcpClient",
+        "typeVersion": 1,
+        "position": [
+          -80,
+          48
+        ],
+        "id": "6fb90dfd-42bb-4965-8c0c-9a06a91de53f",
+        "name": "舆情爬虫",
+        "executeOnce": false,
+        "onError": "continueRegularOutput"
+      }
+    ],
+    "connections": {
+      "start": {
+        "main": [
+          [
+            {
+              "node": "舆情爬虫",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "舆情爬虫": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {
+      "start": [
+        {
+          "json": {
+            "event": "analysis_sentiment_step_firecrawl",
+            "task_id": "4e6131e9-3bfa-431f-8d70-23f6dbde11d2",
+            "next_task": {
+              "next_task_type": "firecrawl",
+              "next_api_endpoint": "qyyjt"
+            },
+            "task_list": [
+              {
+                "event": "analysis_sentiment_step_extract",
+                "next_task_type": "agent_extract",
+                "next_api_endpoint": "analysis_sentiment"
+              },
+              {
+                "event": "end",
+                "next_task_type": "end"
+              }
+            ],
+            "task_type": "analysis_sentiment",
+            "start_time": "2025-12-15 19:14:53",
+            "task_param": {
+              "cusCode": "CHTDMS2997",
+              "task_id": "4e6131e9-3bfa-431f-8d70-23f6dbde11d2",
+              "biz_type": "analysis_sentiment",
+              "system_id": "chengty_crm",
+              "task_table": "ct_task_logs",
+              "payload_json": "{\"cusCode\": \"CHTDMS2997\", \"monitorEnterprise\": \"江苏金融租赁股份有限公司\", \"projectBackground\": null, \"enterpriseVOS\": [{\"monitorEnterprise\": \"江苏金融租赁股份有限公司\", \"entOrgCode\": \"913200001347585460\", \"cusTypes\": [\"承租人\"], \"records\": [{\"id\": 2519, \"sentimentDate\": \"2025-10-01\", \"title\": \"江苏金融租赁股份有限公司授信额度发生重要变化（截止2013年12月31日）\", \"titleUrl\": \"https://www.qyyjt.cn/visitor/information/riskMonitor/news?id=0DF8BA8F0C889B2B5E3D1E53C68C8914&type=riskMonitor_news&lastLevel=BD01A0125065D3A07024537D35577ED7C55B9740DCBA601DCC4430F4892ED6CD\", \"monitorEnterprise\": \"江苏金融租赁股份有限公司\", \"entOrgCode\": \"913200001347585460\", \"monitorType\": \"信用预警\", \"eventTypeName\": \"新闻舆情\", \"resume\": \"江苏金融租赁股份有限公司授信额度发生重要变化（截止2013年12月31日）\", \"newsSource\": null}]}]}",
+              "records_biz_type": "analysis_sentiment",
+              "records_url_list": [
+                {
+                  "id": 2519,
+                  "bizType": "analysis_sentiment",
+                  "titleUrl": "https://www.qyyjt.cn/visitor/information/riskMonitor/news?id=0DF8BA8F0C889B2B5E3D1E53C68C8914&type=riskMonitor_news&lastLevel=BD01A0125065D3A07024537D35577ED7C55B9740DCBA601DCC4430F4892ED6CD"
+                }
+              ],
+              "monitorEnterprise": "江苏金融租赁股份有限公司",
+              "projectBackground": null
+            },
+            "task_table": "ct_task_logs"
+          }
+        }
+      ]
+    },
+    "versionId": "9f69f7dd-d909-49ef-8212-e08aa2cde533",
+    "activeVersionId": null,
+    "versionCounter": 10,
+    "triggerCount": 0,
+    "tags": [
+      {
+        "updatedAt": "2025-12-22T07:43:29.992Z",
+        "createdAt": "2025-12-22T07:43:29.992Z",
+        "id": "ua2ONOUqKSA5fTUf",
+        "name": "agent"
+      }
+    ],
+    "shared": [
+      {
+        "updatedAt": "2025-12-22T07:36:31.371Z",
+        "createdAt": "2025-12-22T07:36:31.371Z",
+        "role": "workflow:owner",
+        "workflowId": "5oum5Zbqdx4kMb86",
+        "projectId": "s1uNlTs1rZjBeLeU",
+        "project": {
+          "updatedAt": "2025-12-19T01:00:49.665Z",
+          "createdAt": "2025-12-19T01:00:02.906Z",
+          "id": "s1uNlTs1rZjBeLeU",
+          "name": "lu yangcai <lyc557@163.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "creatorId": "6dcaf3c0-1fd4-4345-9341-a64832e22ff3"
+        }
+      }
+    ]
+  },
+  {
+    "updatedAt": "2025-12-22T07:18:05.255Z",
+    "createdAt": "2025-12-22T02:33:09.559Z",
+    "id": "g8PeLTvxV37xB1yM",
+    "name": "My workflow 2",
+    "description": null,
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://host.docker.internal:3080/api/sentiment/extract/batch",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "cusCode",
+                "value": "={{ $('start').item.json.task_param.cusCode }}"
+              },
+              {
+                "name": "monitorEnterprise",
+                "value": "={{ $('start').item.json.task_param.monitorEnterprise }}"
+              },
+              {
+                "name": "projectBackground",
+                "value": "={{ $('start').item.json.task_param.projectBackground }}"
+              },
+              {
+                "name": "enterpriseVOS",
+                "value": "={{ $('start').item.json.task_param.payload_json.parseJson().enterpriseVOS }}"
+              }
+            ]
+          },
+          "options": {
+            "redirect": {
+              "redirect": {
+                "followRedirects": false
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          224,
+          48
+        ],
+        "id": "a0089e2a-9950-43fa-a744-6e4e4a2f7548",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "content": "## 舆情分析\n通过传递 舆情url和项目背景信息进行AI解读",
+          "height": 80,
+          "width": 384
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -304,
+          -96
+        ],
+        "typeVersion": 1,
+        "id": "19690e9a-2638-4092-9d4e-e479f8761c43",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -368,
+          48
+        ],
+        "id": "c2fb52b0-2d50-44e8-97d1-a97388ebd9c9",
+        "name": "start",
+        "alwaysOutputData": false
+      },
+      {
+        "parameters": {
+          "endpointUrl": "http://host.docker.internal:8005/mcp",
+          "tool": {
+            "__rl": true,
+            "value": "firecrawl_batch_scrape",
+            "mode": "list",
+            "cachedResultName": "firecrawl_batch_scrape"
+          },
+          "parameters": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "urls": "={{ $json.task_param.records_url_list }}",
+              "biz_type": "={{ $json.task_param.records_biz_type }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "urls",
+                "displayName": "urls",
+                "defaultMatch": false,
+                "required": true,
+                "display": true,
+                "type": "array",
+                "defaultValue": "[\n  null\n]",
+                "removed": false
+              },
+              {
+                "id": "biz_type",
+                "displayName": "biz_type",
+                "defaultMatch": false,
+                "required": true,
+                "display": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.mcpClient",
+        "typeVersion": 1,
+        "position": [
+          -80,
+          48
+        ],
+        "id": "fa23dfa8-6f8c-48dd-93ae-745b6dab7c62",
+        "name": "舆情爬虫",
+        "executeOnce": false,
+        "onError": "continueRegularOutput"
+      }
+    ],
+    "connections": {
+      "start": {
+        "main": [
+          [
+            {
+              "node": "舆情爬虫",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "舆情爬虫": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {
+      "start": [
+        {
+          "json": {
+            "event": "analysis_sentiment_step_firecrawl",
+            "task_id": "4e6131e9-3bfa-431f-8d70-23f6dbde11d2",
+            "next_task": {
+              "next_task_type": "firecrawl",
+              "next_api_endpoint": "qyyjt"
+            },
+            "task_list": [
+              {
+                "event": "analysis_sentiment_step_extract",
+                "next_task_type": "agent_extract",
+                "next_api_endpoint": "analysis_sentiment"
+              },
+              {
+                "event": "end",
+                "next_task_type": "end"
+              }
+            ],
+            "task_type": "analysis_sentiment",
+            "start_time": "2025-12-15 19:14:53",
+            "task_param": {
+              "cusCode": "CHTDMS2997",
+              "task_id": "4e6131e9-3bfa-431f-8d70-23f6dbde11d2",
+              "biz_type": "analysis_sentiment",
+              "system_id": "chengty_crm",
+              "task_table": "ct_task_logs",
+              "payload_json": "{\"cusCode\": \"CHTDMS2997\", \"monitorEnterprise\": \"江苏金融租赁股份有限公司\", \"projectBackground\": null, \"enterpriseVOS\": [{\"monitorEnterprise\": \"江苏金融租赁股份有限公司\", \"entOrgCode\": \"913200001347585460\", \"cusTypes\": [\"承租人\"], \"records\": [{\"id\": 2519, \"sentimentDate\": \"2025-10-01\", \"title\": \"江苏金融租赁股份有限公司授信额度发生重要变化（截止2013年12月31日）\", \"titleUrl\": \"https://www.qyyjt.cn/visitor/information/riskMonitor/news?id=0DF8BA8F0C889B2B5E3D1E53C68C8914&type=riskMonitor_news&lastLevel=BD01A0125065D3A07024537D35577ED7C55B9740DCBA601DCC4430F4892ED6CD\", \"monitorEnterprise\": \"江苏金融租赁股份有限公司\", \"entOrgCode\": \"913200001347585460\", \"monitorType\": \"信用预警\", \"eventTypeName\": \"新闻舆情\", \"resume\": \"江苏金融租赁股份有限公司授信额度发生重要变化（截止2013年12月31日）\", \"newsSource\": null}]}]}",
+              "records_biz_type": "analysis_sentiment",
+              "records_url_list": [
+                {
+                  "id": 2519,
+                  "bizType": "analysis_sentiment",
+                  "titleUrl": "https://www.qyyjt.cn/visitor/information/riskMonitor/news?id=0DF8BA8F0C889B2B5E3D1E53C68C8914&type=riskMonitor_news&lastLevel=BD01A0125065D3A07024537D35577ED7C55B9740DCBA601DCC4430F4892ED6CD"
+                }
+              ],
+              "monitorEnterprise": "江苏金融租赁股份有限公司",
+              "projectBackground": null
+            },
+            "task_table": "ct_task_logs"
+          }
+        }
+      ]
+    },
+    "versionId": "d738af78-0da7-4331-b5ab-b1415ce9092e",
+    "activeVersionId": null,
+    "versionCounter": 7,
+    "triggerCount": 0,
+    "tags": [],
+    "shared": [
+      {
+        "updatedAt": "2025-12-22T02:33:09.559Z",
+        "createdAt": "2025-12-22T02:33:09.559Z",
+        "role": "workflow:owner",
+        "workflowId": "g8PeLTvxV37xB1yM",
+        "projectId": "s1uNlTs1rZjBeLeU",
+        "project": {
+          "updatedAt": "2025-12-19T01:00:49.665Z",
+          "createdAt": "2025-12-19T01:00:02.906Z",
+          "id": "s1uNlTs1rZjBeLeU",
+          "name": "lu yangcai <lyc557@163.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "creatorId": "6dcaf3c0-1fd4-4345-9341-a64832e22ff3"
+        }
+      }
+    ]
+  },
+  {
+    "updatedAt": "2025-12-19T01:06:08.578Z",
+    "createdAt": "2025-12-19T01:06:08.578Z",
+    "id": "IBE99u8xa9PgFujq",
+    "name": "BIN Card Information Lookup API Connector for AI Agents with Balance Check",
+    "description": null,
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "content": "### ⚙️ Setup Instructions\n\n1. **Import Workflow**: \nLoad this workflow into your n8n instance\n\n2. **Authentication**: \nNo authentication required\n\n3. **Activate Workflow**:\nEnable the workflow to start the MCP server\n\n4. **Get MCP URL**: \nCopy the webhook URL from the MCP trigger\n\n5. **Connect AI Agent**:\nUse the MCP URL in your AI agent configuration\n\n\n### 💡 Usage Notes\n• Parameters are auto-populated by AI using $fromAI() expressions\n• With 2 API endpoints available as tools\n• Responses maintain original API structure\n\n\n### 🛠️ Customization\n• Add data transformation nodes if needed\n• Implement custom error handling\n• Add logging or monitoring nodes\n\n• Modify parameter defaults in any HTTP request node as needed\n\n### 💬 Need Help?\nPing me on [discord](https://discord.me/cfomodz) for integration guidance and custom automations. Check the [n8n documentation](https://docs.n8n.io/integrations/builtin/cluster-nodes/sub-nodes/n8n-nodes-langchain.toolmcp/) for more information.",
+          "height": 1060,
+          "color": 4
+        },
+        "id": "9a3f74d4-7008-4fb7-bcb2-1ec7b747b01c",
+        "name": "Setup Instructions",
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          368,
+          240
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "content": "## 🛠️ BIN Lookup MCP Server ✅ 2 operations\n\n### About\nBIN lookup API, the free api service from bintable.com to lookup card information using it's BIN. the service maintains updated database based on the comunity and other third party services to make sure all BINs in the database are accurate and up to date.\n\n### 🔧 How it Works\n\nThis workflow converts the BIN Lookup API into an MCP-compatible interface for AI agents.\n\n• **MCP Trigger**: Serves as your server endpoint for AI agent requests\n• **HTTP Request Nodes**: Handle API calls to https://api.bintable.com/v1\n• **AI Expressions**: Automatically populate parameters via `$fromAI()` placeholders\n• **Native Integration**: Returns responses directly to the AI agent\n\n\n### 📋 Available Operations (2 endpoints)\n\n**Balance (1 operations)**\ncheck\n\n**Lookup (1 operations)**\nlookup\n\n",
+          "height": 920,
+          "width": 420
+        },
+        "id": "46d8ecad-0403-4111-b955-f98becf98511",
+        "name": "Workflow Overview",
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          640,
+          240
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "path": "bin-lookup-mcp"
+        },
+        "id": "54c9d6f8-e90a-4d73-b622-37295916037f",
+        "name": "BIN Lookup MCP Server",
+        "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+        "position": [
+          1136,
+          240
+        ],
+        "webhookId": "976d6237-d0da-4326-adbb-7fb770ff2df6",
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "content": "## Balance",
+          "height": 200,
+          "width": 300,
+          "color": 2
+        },
+        "id": "acaebad1-70e7-42cb-a999-d11243e32bd3",
+        "name": "Sticky Note",
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1088,
+          384
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "toolDescription": "Check Balance\n\nParameters:\n- Query parameters:\n  • api_key (required) - The API key, which you can get from bintable.com website.",
+          "url": "=https://api.bintable.com/v1/balance",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "api_key",
+                "value": "={{ $fromAI('api_key', 'The API key, which you can get from bintable.com website.', 'string') }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "c1830cb3-92e5-48bb-942b-4e790cc5066c",
+        "name": "Check Balance",
+        "type": "n8n-nodes-base.httpRequestTool",
+        "position": [
+          1232,
+          432
+        ],
+        "typeVersion": 4.2
+      },
+      {
+        "parameters": {
+          "content": "## Lookup",
+          "height": 200,
+          "width": 300,
+          "color": 3
+        },
+        "id": "657fa981-796d-4b1d-bb7f-7d6741f2bc73",
+        "name": "Sticky Note2",
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          1088,
+          624
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "toolDescription": "Lookup for bin\n\nParameters:\n- Path parameters:\n  • bin (required) - pass the required BIN code\n- Query parameters:\n  • api_key (required) - The API key, which you can get from bintable.com website.",
+          "url": "=https://api.bintable.com/v1/{{ $fromAI('bin', 'pass the required BIN code', 'string') }}",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "api_key",
+                "value": "={{ $fromAI('api_key', 'The API key, which you can get from bintable.com website.', 'string') }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "e208e27f-2c6a-4bec-9a38-5cfb31cebebb",
+        "name": "Lookup for bin",
+        "type": "n8n-nodes-base.httpRequestTool",
+        "position": [
+          1232,
+          672
+        ],
+        "typeVersion": 4.2
+      }
+    ],
+    "connections": {
+      "Check Balance": {
+        "ai_tool": [
+          [
+            {
+              "node": "BIN Lookup MCP Server",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Lookup for bin": {
+        "ai_tool": [
+          [
+            {
+              "node": "BIN Lookup MCP Server",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateId": "5542"
+    },
+    "pinData": {},
+    "versionId": "62d00f98-84ff-4f53-9638-95bbd5aa0068",
+    "activeVersionId": null,
+    "versionCounter": 1,
+    "triggerCount": 0,
+    "tags": [],
+    "shared": [
+      {
+        "updatedAt": "2025-12-19T01:06:08.578Z",
+        "createdAt": "2025-12-19T01:06:08.578Z",
+        "role": "workflow:owner",
+        "workflowId": "IBE99u8xa9PgFujq",
+        "projectId": "s1uNlTs1rZjBeLeU",
+        "project": {
+          "updatedAt": "2025-12-19T01:00:49.665Z",
+          "createdAt": "2025-12-19T01:00:02.906Z",
+          "id": "s1uNlTs1rZjBeLeU",
+          "name": "lu yangcai <lyc557@163.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "creatorId": "6dcaf3c0-1fd4-4345-9341-a64832e22ff3"
+        }
+      }
+    ]
+  },
+  {
+    "updatedAt": "2025-12-19T06:05:06.312Z",
+    "createdAt": "2025-12-19T06:05:06.312Z",
+    "id": "dy0nWqdqkKcP4p8E",
+    "name": "My workflow",
+    "description": null,
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          -208,
+          0
+        ],
+        "id": "6e30e62a-ad45-46e5-98c6-8c3ff59995f9",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          208,
+          32
+        ],
+        "id": "93175f65-8031-42ef-bc81-eb591e3efb7d",
+        "name": "HTTP Request"
+      }
+    ],
+    "connections": {
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "bf5568c3-b242-4090-8cb3-2888fcb5da9a",
+    "activeVersionId": null,
+    "versionCounter": 1,
+    "triggerCount": 0,
+    "tags": [],
+    "shared": [
+      {
+        "updatedAt": "2025-12-19T06:05:06.312Z",
+        "createdAt": "2025-12-19T06:05:06.312Z",
+        "role": "workflow:owner",
+        "workflowId": "dy0nWqdqkKcP4p8E",
+        "projectId": "s1uNlTs1rZjBeLeU",
+        "project": {
+          "updatedAt": "2025-12-19T01:00:49.665Z",
+          "createdAt": "2025-12-19T01:00:02.906Z",
+          "id": "s1uNlTs1rZjBeLeU",
+          "name": "lu yangcai <lyc557@163.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "creatorId": "6dcaf3c0-1fd4-4345-9341-a64832e22ff3"
+        }
+      }
+    ]
+  }
+]

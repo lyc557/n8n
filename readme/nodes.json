@@ -1,0 +1,69 @@
+[
+	{
+		"parameters": { "httpMethod": "POST", "path": "/api/sentiment/publish/v1", "options": {} },
+		"type": "n8n-nodes-base.webhook",
+		"typeVersion": 2.1,
+		"position": [-304, 0],
+		"id": "f7678238-d7ce-4067-a0de-5e117063cac1",
+		"name": "Webhook",
+		"webhookId": "ca95ebba-2634-47f4-a818-cc6ed466a9cb"
+	},
+	{
+		"parameters": {
+			"endpointUrl": "http://10.40.0.144:8005/mcp",
+			"tool": {
+				"__rl": true,
+				"value": "firecrawl_batch_scrape",
+				"mode": "list",
+				"cachedResultName": "firecrawl_batch_scrape"
+			},
+			"parameters": {
+				"mappingMode": "defineBelow",
+				"value": {
+					"biz_type": "={{ $('Webhook').item.json.body.biz_type }}",
+					"urls": "={{ $json.records_url_list.map(r => r.titleUrl) }}"
+				},
+				"matchingColumns": [],
+				"schema": [
+					{
+						"id": "urls",
+						"displayName": "urls",
+						"defaultMatch": false,
+						"required": true,
+						"display": true,
+						"type": "array",
+						"defaultValue": "[\n  \"string\"\n]",
+						"removed": false
+					},
+					{
+						"id": "biz_type",
+						"displayName": "biz_type",
+						"defaultMatch": false,
+						"required": true,
+						"display": true,
+						"type": "string",
+						"removed": false
+					}
+				],
+				"attemptToConvertTypes": false,
+				"convertFieldsToString": false
+			},
+			"options": {}
+		},
+		"type": "@n8n/n8n-nodes-langchain.mcpClient",
+		"typeVersion": 1,
+		"position": [176, 0],
+		"id": "c825873a-3d77-44cb-8226-c693a43ee50e",
+		"name": "MCP Client"
+	},
+	{
+		"parameters": {
+			"jsCode": "const payloadJson = $input.first().json.body.payload_json;\nconst bizType = $input.first().json.body.biz_type; // 如果你的字段名不同就改这里\n\nconst payload = JSON.parse(payloadJson);\n\nconst records_url_list = [];\n\nfor (const enterprise of (payload.enterpriseVOS ?? [])) {\n  for (const record of (enterprise.records ?? [])) {\n    const id = record.id;\n    const titleUrl = record.titleUrl; // 如果是 title_url 就改成 record.title_url\n    records_url_list.push({ id, titleUrl, bizType });\n  }\n}\n\nreturn [{ json: { records_url_list } }];"
+		},
+		"type": "n8n-nodes-base.code",
+		"typeVersion": 2,
+		"position": [-48, 0],
+		"id": "440820a7-cc42-4a43-8cd0-9a734201e579",
+		"name": "Code in JavaScript"
+	}
+]
