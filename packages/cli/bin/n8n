@@ -38,16 +38,16 @@ require('reflect-metadata');
 if (process.env.E2E_TESTS !== 'true') {
 	// Loading dotenv early ensures that `process.env` is up-to-date everywhere in code
 	const dotenv = require('dotenv');
-const fs = require('fs');
+	const fs = require('fs');
 
-// Load local .env from cli directory
+	// Load local .env from cli directory
 dotenv.config({ path: path.join(__dirname, '../.env'), quiet: true });
 
-// Optionally load .env from project root
-const rootEnv = path.join(__dirname, '../../../.env');
-if (fs.existsSync(rootEnv)) {
-  dotenv.config({ path: rootEnv, quiet: true });
-}
+	// Optionally load .env from project root
+	const rootEnv = path.join(__dirname, '../../../.env');
+	if (fs.existsSync(rootEnv)) {
+		dotenv.config({ path: rootEnv, quiet: true });
+	}
 }
 
 // Load config early to ensure `N8N_CONFIG_FILES` values are populated into `GlobalConfig`
