@@ -1,11 +1,11 @@
 [
   {
-    "updatedAt": "2025-12-25T07:24:12.506Z",
-    "createdAt": "2025-12-24T03:51:54.540Z",
-    "id": "MQfdngyZiW8KvZpf",
-    "name": "舆情分析v1",
+    "updatedAt": "2025-12-29T02:02:26.770Z",
+    "createdAt": "2025-12-29T01:55:06.086Z",
+    "id": "2Xbd6VBegIN65cDZ",
+    "name": "舆情分析v1229",
     "description": null,
-    "active": true,
+    "active": false,
     "isArchived": false,
     "nodes": [
       {
@@ -17,10 +17,10 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2.1,
         "position": [
-          -304,
+          0,
           0
         ],
-        "id": "f7678238-d7ce-4067-a0de-5e117063cac1",
+        "id": "5f110c00-7fd7-460f-94d6-f5b76910ee8a",
         "name": "Webhook",
         "webhookId": "ca95ebba-2634-47f4-a818-cc6ed466a9cb"
       },
@@ -31,10 +31,10 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          -48,
+          256,
           0
         ],
-        "id": "440820a7-cc42-4a43-8cd0-9a734201e579",
+        "id": "a8cec5f2-4a85-4405-b4d3-2a874ad7bde8",
         "name": "参数处理1"
       },
       {
@@ -82,10 +82,10 @@
         "type": "@n8n/n8n-nodes-langchain.mcpClient",
         "typeVersion": 1,
         "position": [
-          176,
+          480,
           0
         ],
-        "id": "c825873a-3d77-44cb-8226-c693a43ee50e",
+        "id": "95f63289-f60d-49ea-b83f-dc9cb30a3ec6",
         "name": "网页爬虫"
       },
       {
@@ -104,10 +104,10 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          384,
+          688,
           0
         ],
-        "id": "f33650a0-fb23-419e-91c3-32fd766a1e78",
+        "id": "b51ede68-5297-4863-b548-5543b5a69468",
         "name": "舆情分析 agent"
       },
       {
@@ -124,14 +124,14 @@
         "type": "n8n-nodes-base.rabbitmq",
         "typeVersion": 1.1,
         "position": [
-          592,
+          896,
           0
         ],
-        "id": "df20b386-2114-47f4-a735-425ed09ce285",
+        "id": "35525f83-75e1-4d49-b329-799fdb8e6bf8",
         "name": "RabbitMQ",
         "credentials": {
           "rabbitmq": {
-            "id": "JxeBCOAAEyO4RDyF",
+            "id": "RM49WUFT45fA6zP4",
             "name": "RabbitMQ account"
           }
         }
@@ -220,27 +220,27 @@
         }
       ]
     },
-    "versionId": "d9f2242a-3d98-4aa2-8b44-785fef1f5da3",
-    "activeVersionId": "20e3c0f5-a705-4310-9b05-11f9522301cb",
-    "versionCounter": 30,
-    "triggerCount": 1,
+    "versionId": "dae479b8-8b21-446c-aff4-9a9022e5004b",
+    "activeVersionId": null,
+    "versionCounter": 3,
+    "triggerCount": 0,
     "tags": [],
     "shared": [
       {
-        "updatedAt": "2025-12-24T03:51:54.542Z",
-        "createdAt": "2025-12-24T03:51:54.542Z",
+        "updatedAt": "2025-12-29T01:55:06.086Z",
+        "createdAt": "2025-12-29T01:55:06.086Z",
         "role": "workflow:owner",
-        "workflowId": "MQfdngyZiW8KvZpf",
-        "projectId": "sxfhxWbi3sgr39dI",
+        "workflowId": "2Xbd6VBegIN65cDZ",
+        "projectId": "s1uNlTs1rZjBeLeU",
         "project": {
-          "updatedAt": "2025-12-18T06:58:03.535Z",
-          "createdAt": "2025-12-18T06:53:07.412Z",
-          "id": "sxfhxWbi3sgr39dI",
+          "updatedAt": "2025-12-19T01:00:49.665Z",
+          "createdAt": "2025-12-19T01:00:02.906Z",
+          "id": "s1uNlTs1rZjBeLeU",
           "name": "lu yangcai <lyc557@163.com>",
           "type": "personal",
           "icon": null,
           "description": null,
-          "creatorId": "4de91867-2f8a-487f-a97f-7bd808c47b88"
+          "creatorId": "6dcaf3c0-1fd4-4345-9341-a64832e22ff3"
         }
       }
     ]

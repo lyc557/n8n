@@ -37,7 +37,17 @@ require('reflect-metadata');
 // Also, do not use `inE2ETests` from constants here, because that'd end up code that might read from `process.env` before the values are loaded from an `.env` file.
 if (process.env.E2E_TESTS !== 'true') {
 	// Loading dotenv early ensures that `process.env` is up-to-date everywhere in code
-	require('dotenv').config({ quiet: true });
+	const dotenv = require('dotenv');
+const fs = require('fs');
+
+// Load local .env from cli directory
+dotenv.config({ path: path.join(__dirname, '../.env'), quiet: true });
+
+// Optionally load .env from project root
+const rootEnv = path.join(__dirname, '../../../.env');
+if (fs.existsSync(rootEnv)) {
+  dotenv.config({ path: rootEnv, quiet: true });
+}
 }
 
 // Load config early to ensure `N8N_CONFIG_FILES` values are populated into `GlobalConfig`
