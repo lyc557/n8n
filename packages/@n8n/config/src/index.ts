@@ -51,6 +51,7 @@ export { WorkflowsConfig } from './configs/workflows.config';
 export * from './custom-types';
 export { DeploymentConfig } from './configs/deployment.config';
 export { MfaConfig } from './configs/mfa.config';
+export { McpConfig } from './configs/mcp.config';
 export { HiringBannerConfig } from './configs/hiring-banner.config';
 export { PersonalizationConfig } from './configs/personalization.config';
 export { NodesConfig } from './configs/nodes.config';
