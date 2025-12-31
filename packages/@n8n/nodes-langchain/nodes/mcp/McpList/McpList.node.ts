@@ -58,6 +58,7 @@ export class McpList implements INodeType {
 						typeOptions: {
 							searchListMethod: 'getMcpServers',
 							searchable: true,
+							skipCredentialsCheckInRLC: true,
 						},
 					},
 					{
